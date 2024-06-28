@@ -6,13 +6,13 @@ import (
 	"github.com/Jilwer/vrcgo/bot/commands"
 	"github.com/Jilwer/vrcgo/bot/components"
 	"github.com/Jilwer/vrcgo/bot/handlers"
-	"github.com/disgoorg/bot-template/bottemplate"
 	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	vrcbot "github.com/Jilwer/vrcgo/bot"
 	"github.com/disgoorg/disgo/bot"
 	"github.com/disgoorg/disgo/handler"
 )
@@ -27,7 +27,7 @@ func main() {
 	path := flag.String("config", "config.toml", "path to config")
 	flag.Parse()
 
-	cfg, err := bottemplate.LoadConfig(*path)
+	cfg, err := vrcbot.LoadConfig(*path)
 	if err != nil {
 		slog.Error("Failed to read config", slog.Any("err", err))
 		os.Exit(-1)
@@ -37,7 +37,7 @@ func main() {
 	slog.Info("Starting bot-template...", slog.String("version", version), slog.String("commit", commit))
 	slog.Info("Syncing commands", slog.Bool("sync", *shouldSyncCommands))
 
-	b := bottemplate.New(*cfg, version, commit)
+	b := vrcbot.New(*cfg, version, commit)
 
 	h := handler.New()
 	h.Command("/test", commands.TestHandler)
@@ -77,7 +77,7 @@ func main() {
 	slog.Info("Shutting down bot...")
 }
 
-func setupLogger(cfg bottemplate.LogConfig) {
+func setupLogger(cfg vrcbot.LogConfig) {
 	opts := &slog.HandlerOptions{
 		AddSource: cfg.AddSource,
 		Level:     cfg.Level,
