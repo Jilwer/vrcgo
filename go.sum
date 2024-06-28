@@ -1,6 +1,8 @@
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+github.com/disgoorg/bot-template v0.0.0-20240605133808-a2cb170137b3 h1:oZGVH1b1Ub3ebvtcABnklBcs6vIFwjtExpp1gu4+Z78=
+github.com/disgoorg/bot-template v0.0.0-20240605133808-a2cb170137b3/go.mod h1:m+5B3t8pRZBkYdIqUJ7bX8HzjRr5qmqF2zsWki+k3E0=
 github.com/disgoorg/disgo v0.18.7 h1:Xg5eiOdSo+wR3CDMIPh9Vmykdkwk/rdcs00vhr2U6m0=
 github.com/disgoorg/disgo v0.18.7/go.mod h1:gkl6DBdbKUvmOOJayWPSvS52KPN/8uJGJ2f13gCEB1o=
 github.com/disgoorg/json v1.1.0 h1:7xigHvomlVA9PQw9bMGO02PHGJJPqvX5AnwlYg/Tnys=
