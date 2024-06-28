@@ -3,16 +3,16 @@ package main
 import (
 	"context"
 	"flag"
+	"github.com/Jilwer/vrcgo/bot/commands"
+	"github.com/Jilwer/vrcgo/bot/components"
+	"github.com/Jilwer/vrcgo/bot/handlers"
+	"github.com/disgoorg/bot-template/bottemplate"
 	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
-	"github.com/disgoorg/bot-template/bottemplate"
-	"github.com/disgoorg/bot-template/bottemplate/commands"
-	"github.com/disgoorg/bot-template/bottemplate/components"
-	"github.com/disgoorg/bot-template/bottemplate/handlers"
 	"github.com/disgoorg/disgo/bot"
 	"github.com/disgoorg/disgo/handler"
 )
