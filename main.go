@@ -3,16 +3,16 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/Jilwer/vrcgo/bot/commands"
-	"github.com/Jilwer/vrcgo/bot/components"
-	"github.com/Jilwer/vrcgo/bot/handlers"
+	"github.com/Jilwer/vrcgo/vrcbot/commands"
+	"github.com/Jilwer/vrcgo/vrcbot/components"
+	"github.com/Jilwer/vrcgo/vrcbot/handlers"
 	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
-	vrcbot "github.com/Jilwer/vrcgo/bot"
+	vrcbot "github.com/Jilwer/vrcgo/vrcbot"
 	"github.com/disgoorg/disgo/bot"
 	"github.com/disgoorg/disgo/handler"
 )
@@ -34,7 +34,7 @@ func main() {
 	}
 
 	setupLogger(cfg.Log)
-	slog.Info("Starting bot-template...", slog.String("version", version), slog.String("commit", commit))
+	slog.Info("Starting vrcgo...", slog.String("version", version), slog.String("commit", commit))
 	slog.Info("Syncing commands", slog.Bool("sync", *shouldSyncCommands))
 
 	b := vrcbot.New(*cfg, version, commit)
@@ -46,7 +46,7 @@ func main() {
 	h.Component("/test-button", components.TestComponent)
 
 	if err = b.SetupBot(h, bot.NewListenerFunc(b.OnReady), handlers.MessageHandler(b)); err != nil {
-		slog.Error("Failed to setup bot", slog.Any("err", err))
+		slog.Error("Failed to setup vrcbot", slog.Any("err", err))
 		os.Exit(-1)
 	}
 
@@ -74,7 +74,7 @@ func main() {
 	s := make(chan os.Signal, 1)
 	signal.Notify(s, syscall.SIGINT, syscall.SIGTERM)
 	<-s
-	slog.Info("Shutting down bot...")
+	slog.Info("Shutting down vrcbot...")
 }
 
 func setupLogger(cfg vrcbot.LogConfig) {

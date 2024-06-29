@@ -1,6 +1,6 @@
 services:
   bot:
-    image: ghcr.io/disgoorg/bot-template
+    image: ghcr.io/disgoorg/vrcbot-template
     restart: unless-stopped
     volumes:
       - ./config.toml:/var/lib/config.toml
@@ -10,4 +10,4 @@ services:
 
 networks:
   bot:
-    name: bot
+    name: vrcbot

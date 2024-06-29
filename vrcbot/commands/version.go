@@ -3,7 +3,7 @@ package commands
 import (
 	"fmt"
 
-	vrcbot "github.com/Jilwer/vrcgo/bot"
+	vrcbot "github.com/Jilwer/vrcgo/vrcbot"
 	"github.com/disgoorg/disgo/discord"
 	"github.com/disgoorg/disgo/handler"
 )

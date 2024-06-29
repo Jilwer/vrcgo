@@ -1,4 +1,4 @@
-package bot
+package vrcbot
 
 import (
 	"context"
@@ -47,7 +47,7 @@ func (b *Bot) SetupBot(listeners ...bot.EventListener) error {
 }
 
 func (b *Bot) OnReady(_ *events.Ready) {
-	slog.Info("bot-template ready")
+	slog.Info("vrcgo ready")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := b.Client.SetPresence(ctx, gateway.WithListeningActivity("you"), gateway.WithOnlineStatus(discord.OnlineStatusOnline)); err != nil {

@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	vrcbot "github.com/Jilwer/vrcgo/bot"
+	vrcbot "github.com/Jilwer/vrcgo/vrcbot"
 	"github.com/disgoorg/disgo/bot"
 	"github.com/disgoorg/disgo/events"
 )
