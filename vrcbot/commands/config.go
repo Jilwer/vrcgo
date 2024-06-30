@@ -33,8 +33,6 @@ func ConfigHandler(e *handler.CommandEvent) error {
 		return err
 	}
 
-	log.Println(string(configJson))
-
 	return e.CreateMessage(discord.NewMessageCreateBuilder().
 		SetContent("Here is the system config for VRChat").AddFile("config.json", "vrchat system config", strings.NewReader(string(configJson))).Build(),
 	)
