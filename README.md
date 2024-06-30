@@ -1,7 +1,6 @@
 # VRCGO 
 VRCGO plans to be a full featured discord bot that wrap's the VRChat API
 
-# Table of Contents
 ## Table of Contents
 - [Installation](#installation)
 - [Usage](#usage)
