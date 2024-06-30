@@ -3,14 +3,15 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/Jilwer/vrcgo/vrcbot/commands"
-	"github.com/Jilwer/vrcgo/vrcbot/components"
-	"github.com/Jilwer/vrcgo/vrcbot/handlers"
 	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/Jilwer/vrcgo/vrcbot/commands"
+	"github.com/Jilwer/vrcgo/vrcbot/components"
+	"github.com/Jilwer/vrcgo/vrcbot/handlers"
 
 	vrcbot "github.com/Jilwer/vrcgo/vrcbot"
 	"github.com/disgoorg/disgo/bot"
@@ -45,6 +46,7 @@ func main() {
 	h.Command("/version", commands.VersionHandler(b))
 	h.Component("/test-button", components.TestComponent)
 	h.Command("/online", commands.OnlineHandler)
+	h.Command("/config", commands.ConfigHandler)
 
 	if err = b.SetupBot(h, bot.NewListenerFunc(b.OnReady), handlers.MessageHandler(b)); err != nil {
 		slog.Error("Failed to setup vrcbot", slog.Any("err", err))

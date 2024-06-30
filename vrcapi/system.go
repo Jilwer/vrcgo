@@ -151,7 +151,7 @@ type ConfigResp struct {
 
 // Returns the system configuration of the VRChat API as a ConfigResp struct.
 func (c *VRCApiClient) GetSystemConfig() (ConfigResp, error) {
-	u := c.BaseURL.String() + "config"
+	u := c.BaseURL.String() + "/config"
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
 		return ConfigResp{}, err
