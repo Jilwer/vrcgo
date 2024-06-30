@@ -5,7 +5,7 @@ import (
 	"net/url"
 )
 
-const BaseURL = "https://vrchat.com/api/1/visits"
+const BaseURL = "https://vrchat.com/api/1"
 const APIKey = "JlE5Jldo5Jibnk5O5hTx6XVqsJu4WJ26"
 
 type VRCApiClient struct {
