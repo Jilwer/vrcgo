@@ -2,7 +2,6 @@ package commands
 
 import (
 	"encoding/json"
-	"log"
 	"strings"
 
 	"github.com/Jilwer/vrcgo/vrcapi"
