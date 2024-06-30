@@ -35,7 +35,7 @@ TODO
 Contributions are welcome! If you have any ideas or improvements, feel free to open an issue or submit a pull request.
 
 ### Thanks
-Special thanks to the VRChat API Docs team for providing easy to access documentation on the VRChat API. https://vrchatapi.github.io/
+- Special thanks to the VRChat API Docs team for providing easy to access documentation on the VRChat API. https://vrchatapi.github.io/
 
 ### License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
