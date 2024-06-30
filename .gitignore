@@ -23,6 +23,7 @@ go.work.sum
 
 # Secrets
 config.toml
+.idea/
 .idea/vcs.xml
 .idea/vrcgo.iml
 .idea/modules.xml
