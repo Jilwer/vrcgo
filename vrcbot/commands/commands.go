@@ -6,4 +6,5 @@ var Commands = []discord.ApplicationCommandCreate{
 	test,
 	version,
 	online,
+	config,
 }
