@@ -148,7 +148,7 @@ type SystemConfigResp struct {
 	PlayerURLResolverVersion                      string   `json:"player-url-resolver-version"`
 }
 
-// GetSystemConfig Returns the system configuration of the VRChat API as a ConfigResp struct.
+// GetSystemConfig Returns the system configuration of the VRChat API as a SystemConfigResp struct.
 func (c *VRCApiClient) GetSystemConfig() (SystemConfigResp, error) {
 	u := c.BaseURL.String() + "/config"
 	req, err := http.NewRequest("GET", u, nil)
