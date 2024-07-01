@@ -6,6 +6,8 @@ import (
 )
 
 const BaseURL = "https://vrchat.com/api/1"
+const BaseDevAPI = "https://dev-api.vrchat.cloud/api/1"
+const BaseClientAPI = "https://api.vrchat.cloud/api/1"
 const APIKey = "JlE5Jldo5Jibnk5O5hTx6XVqsJu4WJ26"
 
 type VRCApiClient struct {
