@@ -8,8 +8,8 @@ import (
 	"time"
 )
 
-// OnlineUsers returns the number of online users in the VRChat API.
-func (c *VRCApiClient) OnlineUsers() (string, error) {
+// GetOnlineUsers returns the number of online users in the VRChat API.
+func (c *VRCApiClient) GetOnlineUsers() (string, error) {
 	u := c.BaseURL.String() + "/visits"
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
@@ -36,10 +36,39 @@ func (c *VRCApiClient) OnlineUsers() (string, error) {
 	}
 
 	return string(body), nil
-
 }
 
-type ConfigResp struct {
+// GetSystemTime returns the current time of the VRChat API.
+func (c *VRCApiClient) GetSystemTime() (string, error) {
+	u := c.BaseURL.String() + "/time"
+	req, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		return "", err
+	}
+
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", c.UserAgent)
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return "", err
+	}
+
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return "", errors.New("API returned non-200 status code: " + resp.Status)
+	}
+
+	return string(body), nil
+}
+
+type SystemConfigResp struct {
 	VoiceEnableDegradation      bool   `json:"VoiceEnableDegradation"`
 	VoiceEnableReceiverLimiting bool   `json:"VoiceEnableReceiverLimiting"`
 	Address                     string `json:"address"`
@@ -149,12 +178,12 @@ type ConfigResp struct {
 	PlayerURLResolverVersion                      string   `json:"player-url-resolver-version"`
 }
 
-// Returns the system configuration of the VRChat API as a ConfigResp struct.
-func (c *VRCApiClient) GetSystemConfig() (ConfigResp, error) {
+// GetSystemConfig Returns the system configuration of the VRChat API as a SystemConfigResp struct.
+func (c *VRCApiClient) GetSystemConfig() (SystemConfigResp, error) {
 	u := c.BaseURL.String() + "/config"
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
-		return ConfigResp{}, err
+		return SystemConfigResp{}, err
 	}
 
 	req.Header.Set("Accept", "application/json")
@@ -162,24 +191,24 @@ func (c *VRCApiClient) GetSystemConfig() (ConfigResp, error) {
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return ConfigResp{}, err
+		return SystemConfigResp{}, err
 	}
 
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return ConfigResp{}, err
+		return SystemConfigResp{}, err
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return ConfigResp{}, errors.New("API returned non-200 status code: " + resp.Status)
+		return SystemConfigResp{}, errors.New("API returned non-200 status code: " + resp.Status)
 	}
 
-	var config ConfigResp
+	var config SystemConfigResp
 	err = json.Unmarshal(body, &config)
 	if err != nil {
-		return ConfigResp{}, err
+		return SystemConfigResp{}, err
 	}
 
 	return config, nil
