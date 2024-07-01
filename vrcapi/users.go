@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-type SearchUsersResp []struct {
+type CommonUserFields struct {
 	Bio                            string   `json:"bio"`
 	BioLinks                       []string `json:"bioLinks"`
 	CurrentAvatarImageURL          string   `json:"currentAvatarImageUrl"`
@@ -17,7 +17,7 @@ type SearchUsersResp []struct {
 	CurrentAvatarTags              []string `json:"currentAvatarTags"`
 	DeveloperType                  string   `json:"developerType"`
 	DisplayName                    string   `json:"displayName"`
-	FallbackAvatar                 string   `json:"fallbackAvatar"`
+	FriendKey                      string   `json:"friendKey"`
 	ID                             string   `json:"id"`
 	IsFriend                       bool     `json:"isFriend"`
 	LastPlatform                   string   `json:"last_platform"`
@@ -28,7 +28,11 @@ type SearchUsersResp []struct {
 	Tags                           []string `json:"tags"`
 	UserIcon                       string   `json:"userIcon"`
 	Location                       string   `json:"location"`
-	FriendKey                      string   `json:"friendKey"`
+}
+
+type SearchUsersResp []struct {
+	CommonUserFields
+	FallbackAvatar string `json:"fallbackAvatar"`
 }
 
 // SearchUsers returns a list of users based on a text query.
@@ -75,6 +79,7 @@ func (c *VRCApiClient) SearchUsers(searchQuery string) (SearchUsersResp, error) 
 }
 
 type GetUserByIDResp struct {
+	CommonUserFields
 	AllowAvatarCopying bool `json:"allowAvatarCopying"`
 	Badges             []struct {
 		AssignedAt       time.Time `json:"assignedAt"`
@@ -86,36 +91,18 @@ type GetUserByIDResp struct {
 		Showcased        bool      `json:"showcased"`
 		UpdatedAt        time.Time `json:"updatedAt"`
 	} `json:"badges"`
-	Bio                            string   `json:"bio"`
-	BioLinks                       []string `json:"bioLinks"`
-	CurrentAvatarImageURL          string   `json:"currentAvatarImageUrl"`
-	CurrentAvatarThumbnailImageURL string   `json:"currentAvatarThumbnailImageUrl"`
-	CurrentAvatarTags              []string `json:"currentAvatarTags"`
-	DateJoined                     string   `json:"date_joined"`
-	DeveloperType                  string   `json:"developerType"`
-	DisplayName                    string   `json:"displayName"`
-	FriendKey                      string   `json:"friendKey"`
-	FriendRequestStatus            string   `json:"friendRequestStatus"`
-	ID                             string   `json:"id"`
-	InstanceID                     string   `json:"instanceId"`
-	IsFriend                       bool     `json:"isFriend"`
-	LastActivity                   string   `json:"last_activity"`
-	LastLogin                      string   `json:"last_login"`
-	LastPlatform                   string   `json:"last_platform"`
-	Location                       string   `json:"location"`
-	Note                           string   `json:"note"`
-	ProfilePicOverride             string   `json:"profilePicOverride"`
-	ProfilePicOverrideThumbnail    string   `json:"profilePicOverrideThumbnail"`
-	Pronouns                       string   `json:"pronouns"`
-	State                          string   `json:"state"`
-	Status                         string   `json:"status"`
-	StatusDescription              string   `json:"statusDescription"`
-	Tags                           []string `json:"tags"`
-	TravelingToInstance            string   `json:"travelingToInstance"`
-	TravelingToLocation            string   `json:"travelingToLocation"`
-	TravelingToWorld               string   `json:"travelingToWorld"`
-	UserIcon                       string   `json:"userIcon"`
-	WorldID                        string   `json:"worldId"`
+	DateJoined                  string `json:"date_joined"`
+	FriendRequestStatus         string `json:"friendRequestStatus"`
+	InstanceID                  string `json:"instanceId"`
+	LastActivity                string `json:"last_activity"`
+	LastLogin                   string `json:"last_login"`
+	Note                        string `json:"note"`
+	ProfilePicOverrideThumbnail string `json:"profilePicOverrideThumbnail"`
+	State                       string `json:"state"`
+	TravelingToInstance         string `json:"travelingToInstance"`
+	TravelingToLocation         string `json:"travelingToLocation"`
+	TravelingToWorld            string `json:"travelingToWorld"`
+	WorldID                     string `json:"worldId"`
 }
 
 // GetUserByID returns user information about a specific user using their ID.
