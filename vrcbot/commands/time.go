@@ -6,24 +6,24 @@ import (
 	"github.com/disgoorg/disgo/handler"
 )
 
-var online = discord.SlashCommandCreate{
-	Name:        "online",
-	Description: "return the number of users online in vrchat",
+var time = discord.SlashCommandCreate{
+	Name:        "time",
+	Description: "return the system time of vrchat",
 }
 
-func OnlineHandler(e *handler.CommandEvent) error {
+func TimeHandler(e *handler.CommandEvent) error {
 
 	vrcapiClient, err := vrcapi.NewVRCApiClient(vrcapi.BaseURL, UserAgent)
 	if err != nil {
 		return err
 	}
 
-	online, err := vrcapiClient.GetOnlineUsers()
+	time, err := vrcapiClient.GetSystemTime()
 	if err != nil {
 		return err
 	}
 
 	return e.CreateMessage(discord.NewMessageCreateBuilder().
-		SetContentf("Online: %s", online).Build(),
+		SetContentf("System Time: %s", time).Build(),
 	)
 }
