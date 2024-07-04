@@ -47,6 +47,7 @@ func main() {
 	h.Component("/test-button", components.TestComponent)
 	h.Command("/online", commands.OnlineHandler)
 	h.Command("/config", commands.ConfigHandler)
+	h.Command("/time", commands.TimeHandler)
 
 	if err = b.SetupBot(h, bot.NewListenerFunc(b.OnReady), handlers.MessageHandler(b)); err != nil {
 		slog.Error("Failed to setup vrcbot", slog.Any("err", err))
