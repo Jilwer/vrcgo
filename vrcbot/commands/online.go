@@ -18,7 +18,7 @@ func OnlineHandler(e *handler.CommandEvent) error {
 		return err
 	}
 
-	online, err := vrcapiClient.OnlineUsers()
+	online, err := vrcapiClient.GetOnlineUsers()
 	if err != nil {
 		return err
 	}
