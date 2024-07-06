@@ -188,3 +188,18 @@ type RepresentedGroup struct {
 	MemberVisibility string `json:"memberVisibility"`
 	IsRepresenting   bool   `json:"isRepresenting"`
 }
+
+// UpdateUserInfoRequest represents a request to update user information.
+type UpdateUserInfoRequest struct {
+	Email              string   `json:"email"`
+	Birthday           string   `json:"birthday"`
+	AcceptedTOSVersion int      `json:"acceptedTOSVersion"`
+	Tags               []string `json:"tags"`
+	Status             string   `json:"status"`
+	StatusDescription  string   `json:"statusDescription"`
+	Bio                string   `json:"bio"`
+	BioLinks           []string `json:"bioLinks"`
+	Pronouns           string   `json:"pronouns"`
+	IsBoopingEnabled   bool     `json:"isBoopingEnabled"`
+	UserIcon           string   `json:"userIcon"`
+}
