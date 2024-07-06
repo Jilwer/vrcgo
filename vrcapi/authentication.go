@@ -3,6 +3,7 @@ package vrcapi
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/Jilwer/vrcgo/vrcapi/objects"
 	"net/http"
 )
 
@@ -15,10 +16,6 @@ const (
 	FilterUserID      = "username"
 	FilterDisplayName = "displayName"
 )
-
-type CheckUserExistsResp struct {
-	UserExists bool `json:"userExists"`
-}
 
 // CheckUserExists checks if a user exists in the VRChat API.
 func (c *VRCApiClient) CheckUserExists(filter, query string) (bool, error) {
@@ -43,7 +40,7 @@ func (c *VRCApiClient) CheckUserExists(filter, query string) (bool, error) {
 		return false, fmt.Errorf("API returned non-200 status code: %s", resp.Status)
 	}
 
-	var userExists CheckUserExistsResp
+	var userExists objects.CheckUserExists
 	err = json.NewDecoder(resp.Body).Decode(&userExists)
 	if err != nil {
 		return false, err
