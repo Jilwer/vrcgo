@@ -1,7 +1,6 @@
 package vrcapi
 
 import (
-	"github.com/Jilwer/vrcgo/vrcapi/objects"
 	"net/http"
 	"net/url"
 )
@@ -15,30 +14,39 @@ const AvatarsURL = BaseURL + "/avatars"
 const UsersURL = BaseURL + "/users"
 const WorldsURL = BaseURL + "/worlds"
 
-func NewVRCApiClient(baseURL string, userAgent string) (*objects.VRCApiClient, error) {
+// VRCApiClient represents a client for interacting with the VRC API.
+type VRCApiClient struct {
+	BaseURL             *url.URL
+	UserAgent           string
+	AuthCookie          string
+	TwoFactorAuthCookie string
+	httpClient          *http.Client
+}
+
+func NewVRCApiClient(baseURL string, userAgent string) (*VRCApiClient, error) {
 	base, err := url.Parse(baseURL)
 	if err != nil {
 		return nil, err
 	}
 
-	return &objects.VRCApiClient{
+	return &VRCApiClient{
 		BaseURL:    base,
 		UserAgent:  userAgent,
-		HttpClient: &http.Client{},
+		httpClient: &http.Client{},
 	}, nil
 }
 
-func NewVRCApiClientWithAuth(baseURL string, userAgent string, authCookie string, twoFactorAuthCookie string) (*objects.VRCApiClient, error) {
+func NewVRCApiClientWithAuth(baseURL string, userAgent string, authCookie string, twoFactorAuthCookie string) (*VRCApiClient, error) {
 	base, err := url.Parse(baseURL)
 	if err != nil {
 		return nil, err
 	}
 
-	return &objects.VRCApiClient{
+	return &VRCApiClient{
 		BaseURL:             base,
 		UserAgent:           userAgent,
 		AuthCookie:          authCookie,
 		TwoFactorAuthCookie: twoFactorAuthCookie,
-		HttpClient:          &http.Client{},
+		httpClient:          &http.Client{},
 	}, nil
 }
