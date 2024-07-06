@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
+	"github.com/disgoorg/disgo/discord"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -41,12 +43,18 @@ func main() {
 	b := vrcbot.New(*cfg, version, commit)
 
 	h := handler.New()
-	h.Command("/test", commands.TestHandler)
-	h.Autocomplete("/test", commands.TestAutocompleteHandler)
+
 	h.Command("/version", commands.VersionHandler(b))
 	h.Component("/test-button", components.TestComponent)
-	h.Command("/online", commands.OnlineHandler)
-	h.Command("/config", commands.ConfigHandler)
+
+	for _, c := range commands.Commands {
+		commandName := fmt.Sprintf("/%s", c.Definition.CommandName())
+		h.Command(commandName, c.Handler)
+		if c.AutoCompleteHandler != nil {
+			h.Autocomplete(commandName, c.AutoCompleteHandler)
+		}
+
+	}
 
 	if err = b.SetupBot(h, bot.NewListenerFunc(b.OnReady), handlers.MessageHandler(b)); err != nil {
 		slog.Error("Failed to setup vrcbot", slog.Any("err", err))
@@ -59,9 +67,14 @@ func main() {
 		b.Client.Close(ctx)
 	}()
 
+	var commandDefs []discord.ApplicationCommandCreate
+	for _, c := range commands.Commands {
+		commandDefs = append(commandDefs, c.Definition)
+	}
+
 	if *shouldSyncCommands {
 		slog.Info("Syncing commands", slog.Any("guild_ids", cfg.Bot.DevGuilds))
-		if err = handler.SyncCommands(b.Client, commands.Commands, cfg.Bot.DevGuilds); err != nil {
+		if err = handler.SyncCommands(b.Client, commandDefs, cfg.Bot.DevGuilds); err != nil {
 			slog.Error("Failed to sync commands", slog.Any("err", err))
 		}
 	}
