@@ -259,11 +259,11 @@ func (c *VRCApiClient) UpdateUserInfo(userID string, userInfo objects.UpdateUser
 		return objects.User{}, errors.New("API returned non-200 status code: " + resp.Status)
 	}
 
-	var updatedUserInfo objects.User
-	err = json.Unmarshal(body, &updatedUserInfo)
+	var updatedUser objects.User
+	err = json.Unmarshal(body, &updatedUser)
 	if err != nil {
 		return objects.User{}, err
 	}
 
-	return updatedUserInfo, nil
+	return updatedUser, nil
 }
