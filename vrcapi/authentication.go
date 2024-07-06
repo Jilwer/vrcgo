@@ -58,9 +58,7 @@ GET CURRENT USER
 // GetCurrentUser returns the current user info in the VRChat API. Also user for logging in.
 func (c *VRCApiClient) GetCurrentUser(username, password string) (*objects.GetCurrentUserResp, error) {
 
-	url := fmt.Sprintf("%s/auth/user", AuthURL)
-
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest("GET", AuthURL, nil)
 	if err != nil {
 		return &objects.GetCurrentUserResp{}, err
 	}
