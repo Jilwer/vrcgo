@@ -1,12 +1,14 @@
 package vrcapi
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"github.com/Jilwer/vrcgo/vrcapi/objects"
 	"io"
 	"net/http"
 	"net/url"
+	"reflect"
 )
 
 // SearchUsers returns a list of users based on a text query.
@@ -206,4 +208,62 @@ func (c *VRCApiClient) GetUserCurrentRepresentedGroup(userID string) (objects.Re
 	}
 
 	return group, nil
+}
+
+// UpdateUserInfo updates the information of a user with the given userID.
+func (c *VRCApiClient) UpdateUserInfo(userID string, userInfo objects.UpdateUserInfoRequest) (objects.User, error) {
+	u := c.BaseURL.String() + "/users/" + userID
+
+	nonEmptyFields := make(map[string]interface{})
+
+	val := reflect.ValueOf(userInfo)
+	typ := reflect.TypeOf(userInfo)
+
+	for i := 0; i < val.NumField(); i++ {
+		field := val.Field(i)
+		tag := typ.Field(i).Tag.Get("json")
+
+		if !reflect.DeepEqual(field.Interface(), reflect.Zero(field.Type()).Interface()) {
+			nonEmptyFields[tag] = field.Interface()
+		}
+	}
+
+	userInfoJson, err := json.Marshal(nonEmptyFields)
+	if err != nil {
+		return objects.User{}, err
+	}
+
+	req, err := http.NewRequest("PUT", u, bytes.NewBuffer(userInfoJson))
+	if err != nil {
+		return objects.User{}, err
+	}
+
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("User-Agent", c.UserAgent)
+	req.AddCookie(&http.Cookie{Name: "auth", Value: c.AuthCookie})
+	req.AddCookie(&http.Cookie{Name: "twoFactorAuth", Value: c.TwoFactorAuthCookie})
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return objects.User{}, err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return objects.User{}, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return objects.User{}, errors.New("API returned non-200 status code: " + resp.Status)
+	}
+
+	var updatedUserInfo objects.User
+	err = json.Unmarshal(body, &updatedUserInfo)
+	if err != nil {
+		return objects.User{}, err
+	}
+
+	return updatedUserInfo, nil
 }
