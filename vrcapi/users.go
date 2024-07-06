@@ -10,7 +10,7 @@ import (
 )
 
 // SearchUsers returns a list of users based on a text query.
-func (c *VRCApiClient) SearchUsers(searchQuery string) (objects.LimitedUser, error) {
+func (c *VRCApiClient) SearchUsers(searchQuery string) ([]objects.LimitedUser, error) {
 	u := c.BaseURL.String() + "/users"
 
 	q := url.Values{}
@@ -19,7 +19,7 @@ func (c *VRCApiClient) SearchUsers(searchQuery string) (objects.LimitedUser, err
 
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
-		return objects.LimitedUser{}, err
+		return []objects.LimitedUser{}, err
 	}
 
 	req.Header.Set("Accept", "application/json")
@@ -29,24 +29,24 @@ func (c *VRCApiClient) SearchUsers(searchQuery string) (objects.LimitedUser, err
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return objects.LimitedUser{}, err
+		return []objects.LimitedUser{}, err
 	}
 
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return objects.LimitedUser{}, err
+		return []objects.LimitedUser{}, err
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return objects.LimitedUser{}, errors.New("API returned non-200 status code: " + resp.Status)
+		return []objects.LimitedUser{}, errors.New("API returned non-200 status code: " + resp.Status)
 	}
 
-	var users objects.LimitedUser
+	var users []objects.LimitedUser
 	err = json.Unmarshal(body, &users)
 	if err != nil {
-		return objects.LimitedUser{}, err
+		return []objects.LimitedUser{}, err
 	}
 
 	return users, nil
@@ -91,34 +91,13 @@ func (c *VRCApiClient) GetUserByID(userID string) (objects.User, error) {
 	return user, nil
 }
 
-type GetUserGroupsResp []struct {
-	ID                string    `json:"id"`
-	Name              string    `json:"name"`
-	ShortCode         string    `json:"shortCode"`
-	Discriminator     string    `json:"discriminator"`
-	Description       string    `json:"description"`
-	IconID            string    `json:"iconId"`
-	IconURL           string    `json:"iconUrl"`
-	BannerID          string    `json:"bannerId"`
-	BannerURL         string    `json:"bannerUrl"`
-	Privacy           string    `json:"privacy"`
-	LastPostCreatedAt time.Time `json:"lastPostCreatedAt"`
-	OwnerID           string    `json:"ownerId"`
-	MemberCount       int       `json:"memberCount"`
-	GroupID           string    `json:"groupId"`
-	MemberVisibility  string    `json:"memberVisibility"`
-	IsRepresenting    bool      `json:"isRepresenting"`
-	MutualGroup       bool      `json:"mutualGroup"`
-	LastPostReadAt    time.Time `json:"lastPostReadAt"`
-}
-
 // GetUserGroups returns the groups a specific user is in using their ID.
-func (c *VRCApiClient) GetUserGroups(userID string) (GetUserGroupsResp, error) {
+func (c *VRCApiClient) GetUserGroups(userID string) ([]objects.LimitedUserGroup, error) {
 	u := c.BaseURL.String() + "/users/" + userID + "/groups"
 
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
-		return GetUserGroupsResp{}, err
+		return []objects.LimitedUserGroup{}, err
 	}
 
 	req.Header.Set("Accept", "application/json")
@@ -128,24 +107,24 @@ func (c *VRCApiClient) GetUserGroups(userID string) (GetUserGroupsResp, error) {
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return GetUserGroupsResp{}, err
+		return []objects.LimitedUserGroup{}, err
 	}
 
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return GetUserGroupsResp{}, err
+		return []objects.LimitedUserGroup{}, err
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return GetUserGroupsResp{}, errors.New("API returned non-200 status code: " + resp.Status)
+		return []objects.LimitedUserGroup{}, errors.New("API returned non-200 status code: " + resp.Status)
 	}
 
-	var groups GetUserGroupsResp
+	var groups []objects.LimitedUserGroup
 	err = json.Unmarshal(body, &groups)
 	if err != nil {
-		return GetUserGroupsResp{}, err
+		return []objects.LimitedUserGroup{}, err
 	}
 
 	return groups, nil
