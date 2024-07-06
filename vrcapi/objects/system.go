@@ -124,3 +124,10 @@ type SystemConfig struct {
 	PlayerURLResolverHash                         string            `json:"player-url-resolver-hash"`
 	PlayerURLResolverVersion                      string            `json:"player-url-resolver-version"`
 }
+
+type Error struct {
+	Error struct {
+		Message    string `json:"message"`
+		StatusCode int    `json:"status_code"`
+	} `json:"error"`
+}
