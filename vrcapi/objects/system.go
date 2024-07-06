@@ -2,12 +2,14 @@ package objects
 
 import "time"
 
-type announcement struct {
+// Announcement represents a system announcement.
+type Announcement struct {
 	Name string `json:"name"`
 	Text string `json:"text"`
 }
 
-type downloadUrls struct {
+// DownloadURLs represents URLs for various downloadable content.
+type DownloadURLs struct {
 	Sdk2        string `json:"sdk2"`
 	Sdk3Avatars string `json:"sdk3-avatars"`
 	Sdk3Worlds  string `json:"sdk3-worlds"`
@@ -15,7 +17,8 @@ type downloadUrls struct {
 	Bootstrap   string `json:"bootstrap"`
 }
 
-type dynamicWorldRow struct {
+// DynamicWorldRow represents a row in the dynamic world configuration.
+type DynamicWorldRow struct {
 	Index         int    `json:"index"`
 	Name          string `json:"name"`
 	Platform      string `json:"platform"`
@@ -25,7 +28,8 @@ type dynamicWorldRow struct {
 	Tag           string `json:"tag,omitempty"`
 }
 
-type event struct {
+// Event represents various event configurations.
+type Event struct {
 	DistanceClose             int `json:"distanceClose"`
 	DistanceFactor            int `json:"distanceFactor"`
 	DistanceFar               int `json:"distanceFar"`
@@ -38,11 +42,12 @@ type event struct {
 	ViewSegmentLength         int `json:"viewSegmentLength"`
 }
 
+// SystemConfig represents the system configuration details.
 type SystemConfig struct {
 	VoiceEnableDegradation                        bool              `json:"VoiceEnableDegradation"`
 	VoiceEnableReceiverLimiting                   bool              `json:"VoiceEnableReceiverLimiting"`
 	Address                                       string            `json:"address"`
-	Announcements                                 []announcement    `json:"announcements"`
+	Announcements                                 []Announcement    `json:"announcements"`
 	AppName                                       string            `json:"appName"`
 	BuildVersionTag                               string            `json:"buildVersionTag"`
 	ClientAPIKey                                  string            `json:"clientApiKey"`
@@ -77,9 +82,9 @@ type SystemConfig struct {
 	DisableUdon                                   bool              `json:"disableUdon"`
 	DisableUpgradeAccount                         bool              `json:"disableUpgradeAccount"`
 	DownloadLinkWindows                           string            `json:"downloadLinkWindows"`
-	DownloadUrls                                  downloadUrls      `json:"downloadUrls"`
-	DynamicWorldRows                              []dynamicWorldRow `json:"dynamicWorldRows"`
-	Events                                        event             `json:"events"`
+	DownloadURLs                                  DownloadURLs      `json:"downloadUrls"`
+	DynamicWorldRows                              []DynamicWorldRow `json:"dynamicWorldRows"`
+	Events                                        Event             `json:"events"`
 	GearDemoRoomID                                string            `json:"gearDemoRoomId"`
 	HomeWorldID                                   string            `json:"homeWorldId"`
 	HomepageRedirectTarget                        string            `json:"homepageRedirectTarget"`
