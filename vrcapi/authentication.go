@@ -12,7 +12,7 @@ CHECK USER EXISTS
 
 const (
 	FilterEmail       = "email"
-	FilterUsername    = "username"
+	FilterUserID      = "username"
 	FilterDisplayName = "displayName"
 )
 

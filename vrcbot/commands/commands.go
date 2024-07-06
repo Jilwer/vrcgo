@@ -27,6 +27,10 @@ var Commands = []Command{
 		time,
 		TimeHandler,
 	},
+	{
+		exists,
+		ExistsHandler,
+	},
 }
 
 //var Commands = []discord.ApplicationCommandCreate{

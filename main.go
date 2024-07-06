@@ -44,6 +44,7 @@ func main() {
 
 	h := handler.New()
 	h.Autocomplete("/test", commands.TestAutocompleteHandler)
+	h.Autocomplete("/exists", commands.ExistsAutocompleteHandler)
 	h.Command("/version", commands.VersionHandler(b))
 	h.Component("/test-button", components.TestComponent)
 
