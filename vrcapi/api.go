@@ -14,10 +14,10 @@ const AvatarsURL = BaseURL + "/avatars"
 const UsersURL = BaseURL + "/users"
 const WorldsURL = BaseURL + "/worlds"
 
+// VRCApiClient represents a client for interacting with the VRC API.
 type VRCApiClient struct {
-	BaseURL   *url.URL
-	UserAgent string
-
+	BaseURL             *url.URL
+	UserAgent           string
 	AuthCookie          string
 	TwoFactorAuthCookie string
 	httpClient          *http.Client

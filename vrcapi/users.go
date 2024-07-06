@@ -1,42 +1,18 @@
 package vrcapi
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/Jilwer/vrcgo/vrcapi/objects"
 	"io"
 	"net/http"
 	"net/url"
-	"time"
+	"reflect"
 )
 
-type CommonUserFields struct {
-	Bio                            string   `json:"bio"`
-	BioLinks                       []string `json:"bioLinks"`
-	CurrentAvatarImageURL          string   `json:"currentAvatarImageUrl"`
-	CurrentAvatarThumbnailImageURL string   `json:"currentAvatarThumbnailImageUrl"`
-	CurrentAvatarTags              []string `json:"currentAvatarTags"`
-	DeveloperType                  string   `json:"developerType"`
-	DisplayName                    string   `json:"displayName"`
-	FriendKey                      string   `json:"friendKey"`
-	ID                             string   `json:"id"`
-	IsFriend                       bool     `json:"isFriend"`
-	LastPlatform                   string   `json:"last_platform"`
-	ProfilePicOverride             string   `json:"profilePicOverride"`
-	Pronouns                       string   `json:"pronouns"`
-	Status                         string   `json:"status"`
-	StatusDescription              string   `json:"statusDescription"`
-	Tags                           []string `json:"tags"`
-	UserIcon                       string   `json:"userIcon"`
-	Location                       string   `json:"location"`
-}
-
-type SearchUsersResp []struct {
-	CommonUserFields
-	FallbackAvatar string `json:"fallbackAvatar"`
-}
-
 // SearchUsers returns a list of users based on a text query.
-func (c *VRCApiClient) SearchUsers(searchQuery string) (SearchUsersResp, error) {
+func (c *VRCApiClient) SearchUsers(searchQuery string) ([]objects.LimitedUser, error) {
 	u := c.BaseURL.String() + "/users"
 
 	q := url.Values{}
@@ -45,7 +21,7 @@ func (c *VRCApiClient) SearchUsers(searchQuery string) (SearchUsersResp, error) 
 
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
-		return SearchUsersResp{}, err
+		return []objects.LimitedUser{}, err
 	}
 
 	req.Header.Set("Accept", "application/json")
@@ -55,63 +31,36 @@ func (c *VRCApiClient) SearchUsers(searchQuery string) (SearchUsersResp, error) 
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return SearchUsersResp{}, err
+		return []objects.LimitedUser{}, err
 	}
 
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return SearchUsersResp{}, err
+		return []objects.LimitedUser{}, err
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return SearchUsersResp{}, errors.New("API returned non-200 status code: " + resp.Status)
+		return []objects.LimitedUser{}, errors.New("API returned non-200 status code: " + resp.Status)
 	}
 
-	var users SearchUsersResp
+	var users []objects.LimitedUser
 	err = json.Unmarshal(body, &users)
 	if err != nil {
-		return SearchUsersResp{}, err
+		return []objects.LimitedUser{}, err
 	}
 
 	return users, nil
 }
 
-type GetUserByIDResp struct {
-	CommonUserFields
-	AllowAvatarCopying bool `json:"allowAvatarCopying"`
-	Badges             []struct {
-		AssignedAt       time.Time `json:"assignedAt"`
-		BadgeDescription string    `json:"badgeDescription"`
-		BadgeID          string    `json:"badgeId"`
-		BadgeImageURL    string    `json:"badgeImageUrl"`
-		BadgeName        string    `json:"badgeName"`
-		Hidden           bool      `json:"hidden"`
-		Showcased        bool      `json:"showcased"`
-		UpdatedAt        time.Time `json:"updatedAt"`
-	} `json:"badges"`
-	DateJoined                  string `json:"date_joined"`
-	FriendRequestStatus         string `json:"friendRequestStatus"`
-	InstanceID                  string `json:"instanceId"`
-	LastActivity                string `json:"last_activity"`
-	LastLogin                   string `json:"last_login"`
-	Note                        string `json:"note"`
-	ProfilePicOverrideThumbnail string `json:"profilePicOverrideThumbnail"`
-	State                       string `json:"state"`
-	TravelingToInstance         string `json:"travelingToInstance"`
-	TravelingToLocation         string `json:"travelingToLocation"`
-	TravelingToWorld            string `json:"travelingToWorld"`
-	WorldID                     string `json:"worldId"`
-}
-
 // GetUserByID returns user information about a specific user using their ID.
-func (c *VRCApiClient) GetUserByID(userID string) (GetUserByIDResp, error) {
+func (c *VRCApiClient) GetUserByID(userID string) (objects.User, error) {
 	u := c.BaseURL.String() + "/users/" + userID
 
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
-		return GetUserByIDResp{}, err
+		return objects.User{}, err
 	}
 
 	req.Header.Set("Accept", "application/json")
@@ -121,25 +70,200 @@ func (c *VRCApiClient) GetUserByID(userID string) (GetUserByIDResp, error) {
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return GetUserByIDResp{}, err
+		return objects.User{}, err
 	}
 
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return GetUserByIDResp{}, err
+		return objects.User{}, err
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return GetUserByIDResp{}, errors.New("API returned non-200 status code: " + resp.Status)
+		return objects.User{}, errors.New("API returned non-200 status code: " + resp.Status)
 	}
 
-	var user GetUserByIDResp
+	var user objects.User
 	err = json.Unmarshal(body, &user)
 	if err != nil {
-		return GetUserByIDResp{}, err
+		return objects.User{}, err
 	}
 
 	return user, nil
+}
+
+// GetUserGroups returns the groups a specific user is in using their ID.
+func (c *VRCApiClient) GetUserGroups(userID string) ([]objects.LimitedUserGroup, error) {
+	u := c.BaseURL.String() + "/users/" + userID + "/groups"
+
+	req, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		return []objects.LimitedUserGroup{}, err
+	}
+
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", c.UserAgent)
+	req.AddCookie(&http.Cookie{Name: "auth", Value: c.AuthCookie})
+	req.AddCookie(&http.Cookie{Name: "twoFactorAuth", Value: c.TwoFactorAuthCookie})
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return []objects.LimitedUserGroup{}, err
+	}
+
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return []objects.LimitedUserGroup{}, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return []objects.LimitedUserGroup{}, errors.New("API returned non-200 status code: " + resp.Status)
+	}
+
+	var groups []objects.LimitedUserGroup
+	err = json.Unmarshal(body, &groups)
+	if err != nil {
+		return []objects.LimitedUserGroup{}, err
+	}
+
+	return groups, nil
+}
+
+// GetUserGroupRequests returns the groups a specific user has requested to be invited in using their ID.
+func (c *VRCApiClient) GetUserGroupRequests(userID string) ([]objects.Group, error) {
+	u := c.BaseURL.String() + "/users/" + userID + "/groups/requested"
+
+	req, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		return []objects.Group{}, err
+	}
+
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", c.UserAgent)
+	req.AddCookie(&http.Cookie{Name: "auth", Value: c.AuthCookie})
+	req.AddCookie(&http.Cookie{Name: "twoFactorAuth", Value: c.TwoFactorAuthCookie})
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return []objects.Group{}, err
+	}
+
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return []objects.Group{}, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return []objects.Group{}, errors.New("API returned non-200 status code: " + resp.Status)
+	}
+
+	var groups []objects.Group
+	err = json.Unmarshal(body, &groups)
+	if err != nil {
+		return []objects.Group{}, err
+	}
+
+	return groups, nil
+}
+
+// GetUserCurrentRepresentedGroup returns the group that the user is currently representing using their ID.
+func (c *VRCApiClient) GetUserCurrentRepresentedGroup(userID string) (objects.RepresentedGroup, error) {
+	u := c.BaseURL.String() + "/users/" + userID + "/groups/represented"
+
+	req, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		return objects.RepresentedGroup{}, err
+	}
+
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", c.UserAgent)
+	req.AddCookie(&http.Cookie{Name: "auth", Value: c.AuthCookie})
+	req.AddCookie(&http.Cookie{Name: "twoFactorAuth", Value: c.TwoFactorAuthCookie})
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return objects.RepresentedGroup{}, err
+	}
+
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return objects.RepresentedGroup{}, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return objects.RepresentedGroup{}, errors.New("API returned non-200 status code: " + resp.Status)
+	}
+
+	var group objects.RepresentedGroup
+	err = json.Unmarshal(body, &group)
+	if err != nil {
+		return objects.RepresentedGroup{}, err
+	}
+
+	return group, nil
+}
+
+// UpdateUserInfo updates the information of a user with the given userID.
+func (c *VRCApiClient) UpdateUserInfo(userID string, userInfo objects.UpdateUserInfoRequest) (objects.User, error) {
+	u := c.BaseURL.String() + "/users/" + userID
+
+	nonEmptyFields := make(map[string]interface{})
+
+	val := reflect.ValueOf(userInfo)
+	typ := reflect.TypeOf(userInfo)
+
+	for i := 0; i < val.NumField(); i++ {
+		field := val.Field(i)
+		tag := typ.Field(i).Tag.Get("json")
+
+		if !reflect.DeepEqual(field.Interface(), reflect.Zero(field.Type()).Interface()) {
+			nonEmptyFields[tag] = field.Interface()
+		}
+	}
+
+	userInfoJson, err := json.Marshal(nonEmptyFields)
+	if err != nil {
+		return objects.User{}, err
+	}
+
+	req, err := http.NewRequest("PUT", u, bytes.NewBuffer(userInfoJson))
+	if err != nil {
+		return objects.User{}, err
+	}
+
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("User-Agent", c.UserAgent)
+	req.AddCookie(&http.Cookie{Name: "auth", Value: c.AuthCookie})
+	req.AddCookie(&http.Cookie{Name: "twoFactorAuth", Value: c.TwoFactorAuthCookie})
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return objects.User{}, err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return objects.User{}, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return objects.User{}, errors.New("API returned non-200 status code: " + resp.Status)
+	}
+
+	var updatedUser objects.User
+	err = json.Unmarshal(body, &updatedUser)
+	if err != nil {
+		return objects.User{}, err
+	}
+
+	return updatedUser, nil
 }

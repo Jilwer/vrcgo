@@ -26,6 +26,7 @@ var (
 )
 
 func main() {
+
 	shouldSyncCommands := flag.Bool("sync-commands", false, "Whether to sync commands to discord")
 	path := flag.String("config", "config.toml", "path to config")
 	flag.Parse()
@@ -43,13 +44,16 @@ func main() {
 	b := vrcbot.New(*cfg, version, commit)
 
 	h := handler.New()
-	h.Autocomplete("/test", commands.TestAutocompleteHandler)
+
 	h.Command("/version", commands.VersionHandler(b))
 	h.Component("/test-button", components.TestComponent)
 
 	for _, c := range commands.Commands {
 		commandName := fmt.Sprintf("/%s", c.Definition.CommandName())
 		h.Command(commandName, c.Handler)
+		if c.AutoCompleteHandler != nil {
+			h.Autocomplete(commandName, c.AutoCompleteHandler)
+		}
 
 	}
 
