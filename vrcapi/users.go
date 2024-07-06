@@ -129,3 +129,81 @@ func (c *VRCApiClient) GetUserGroups(userID string) ([]objects.LimitedUserGroup,
 
 	return groups, nil
 }
+
+// GetUserGroupRequests returns the groups a specific user has requested to be invited in using their ID.
+func (c *VRCApiClient) GetUserGroupRequests(userID string) ([]objects.Group, error) {
+	u := c.BaseURL.String() + "/users/" + userID + "/groups/requested"
+
+	req, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		return []objects.Group{}, err
+	}
+
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", c.UserAgent)
+	req.AddCookie(&http.Cookie{Name: "auth", Value: c.AuthCookie})
+	req.AddCookie(&http.Cookie{Name: "twoFactorAuth", Value: c.TwoFactorAuthCookie})
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return []objects.Group{}, err
+	}
+
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return []objects.Group{}, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return []objects.Group{}, errors.New("API returned non-200 status code: " + resp.Status)
+	}
+
+	var groups []objects.Group
+	err = json.Unmarshal(body, &groups)
+	if err != nil {
+		return []objects.Group{}, err
+	}
+
+	return groups, nil
+}
+
+// GetUserCurrentRepresentedGroup returns the group that the user is currently representing using their ID.
+func (c *VRCApiClient) GetUserCurrentRepresentedGroup(userID string) (objects.RepresentedGroup, error) {
+	u := c.BaseURL.String() + "/users/" + userID + "/groups/represented"
+
+	req, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		return objects.RepresentedGroup{}, err
+	}
+
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", c.UserAgent)
+	req.AddCookie(&http.Cookie{Name: "auth", Value: c.AuthCookie})
+	req.AddCookie(&http.Cookie{Name: "twoFactorAuth", Value: c.TwoFactorAuthCookie})
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return objects.RepresentedGroup{}, err
+	}
+
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return objects.RepresentedGroup{}, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return objects.RepresentedGroup{}, errors.New("API returned non-200 status code: " + resp.Status)
+	}
+
+	var group objects.RepresentedGroup
+	err = json.Unmarshal(body, &group)
+	if err != nil {
+		return objects.RepresentedGroup{}, err
+	}
+
+	return group, nil
+}
