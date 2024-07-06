@@ -168,3 +168,42 @@ func (c *VRCApiClient) GetUserGroupRequests(userID string) ([]objects.Group, err
 
 	return groups, nil
 }
+
+// GetUserCurrentRepresentedGroup returns the group that the user is currently representing using their ID.
+func (c *VRCApiClient) GetUserCurrentRepresentedGroup(userID string) (objects.RepresentedGroup, error) {
+	u := c.BaseURL.String() + "/users/" + userID + "/groups/represented"
+
+	req, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		return objects.RepresentedGroup{}, err
+	}
+
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", c.UserAgent)
+	req.AddCookie(&http.Cookie{Name: "auth", Value: c.AuthCookie})
+	req.AddCookie(&http.Cookie{Name: "twoFactorAuth", Value: c.TwoFactorAuthCookie})
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return objects.RepresentedGroup{}, err
+	}
+
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return objects.RepresentedGroup{}, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return objects.RepresentedGroup{}, errors.New("API returned non-200 status code: " + resp.Status)
+	}
+
+	var group objects.RepresentedGroup
+	err = json.Unmarshal(body, &group)
+	if err != nil {
+		return objects.RepresentedGroup{}, err
+	}
+
+	return group, nil
+}
