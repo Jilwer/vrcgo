@@ -165,7 +165,7 @@ type GetUserGroupsResp []struct {
 	LastPostReadAt    time.Time `json:"lastPostReadAt"`
 }
 
-// GetUserGroups returns user information about a specific user using their ID.
+// GetUserGroups returns the groups a specific user is in using their ID.
 func (c *VRCApiClient) GetUserGroups(userID string) (GetUserGroupsResp, error) {
 	u := c.BaseURL.String() + "/users/" + userID + "/groups"
 
